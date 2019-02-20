@@ -114,6 +114,26 @@ public class UserController {
 		return "user/update";
 	}
 	
+	/**
+	 * 用户修改
+	 * @return
+	 */
+	@RequestMapping("user/update.do")
+	public String update(TUser user,HttpSession session,ModelMap map) {
+		//从session中获取修改人的信息
+		TUser cu=(TUser)session.getAttribute("CUSER");
+		//装载修改人
+		user.setUpdator(cu.getId());
+		try {
+			us.updateUser(user);
+			return "redirect:list.do";
+		} catch (AppException e) {
+			map.addAttribute("MSG", e.getErrMsg());
+			return this.get(user.getId(), map);
+		}
+		
+	}
+	
 	
 	
 	

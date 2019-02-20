@@ -89,15 +89,54 @@
 
 						)
 					});
+			
+			//上传文件
+			/* $("#file").change(
+				function(){
+					//json数据
+					var data={
+						url:$("#apath").val()+"/upload/common.do",
+						dataType:"text",
+						type:"post",
+						success:function(data){
+							$("#pic").attr("src","../upload/"+data);
+							$("#picurl").val(data);
+						}
+					}
+					//表单局部提交
+					$("#jvForm").ajaxSubmit(data)
+			}) */
+			//文件上传
+			$("#file").change(
+				function(){
+					//提交json数据
+					var data={
+						url:$("#apath").val()+"/upload/common.do",
+						dataType:"text",
+						type:"post",
+						success:function(data){
+							//动态将src如给img
+							$("#pic").attr("src","../upload/"+data);
+							//赋值将图片地址给<input>传入数据库
+							$("#picurl").val(data);
+						}
+					}
+					//表单局部提交
+					$("#jvForm").ajaxSubmit(data);
+				}		
+			)
+
 		});
 	</script>
 </head>
 <body>
+<!--获得应用的绝对路径-->
+<input type="hidden" value="${pageContext.request.contextPath}" id="apath" /> 
 	<!--用户所在部门的上级部门id-->
 	<input type="hidden" id="udep1" value="${USER.dept.pid}"> <!--用户所在部门的id-->
-		<input type="hidden" id="udep2" value="${USER.dept.id}">
-			${pageContext.request.contextPath} <!--获得应用的绝对路径--> <img
-			src="${pageContext.request.contextPath}/images/logo4.png" /> <br />
+	<input type="hidden" id="udep2" value="${USER.dept.id}">
+	
+	<img src="${pageContext.request.contextPath}/images/logo4.png" /> <br />
 			<!--绝对路径--> <img src="../images/logo4.png" /> <!--相对路径 ../ 表示上一级-->
 			<div class="box-positon">
 				<div class="rpos">
@@ -105,13 +144,14 @@
 						class="pn-frequired">${MSG}</span>
 				</div>
 				<form class="ropt">
-					<input type="submit" onclick="this.form.action='userlist.do';"
+					<input type="submit" onclick="this.form.action='list.do';"
 						value="返回列表" class="return-button" />
 				</form>
 				<div class="clear"></div>
 			</div>
 			<div class="body-box" style="float: right">
-				<form name="fm" id="jvForm" action="add.do" method="post">
+				<form name="fm" id="jvForm" action="update.do" method="post" enctype="multipart/form-data" >
+				<input type="hidden" name="id" value="${USER.id}" />
 					<table cellspacing="1" cellpadding="2" width="100%" border="0"
 						class="pn-ftable">
 						<tbody>
@@ -174,7 +214,7 @@
 								<td width="20%" class="pn-flabel pn-flabel-h">部门:</td>
 								<td width="80%" class="pn-fcontent"><select id="dep1"
 									name="dep1">
-									<!-- 用户的部门的上级部门不等于一级部门的id -->
+										<!-- 用户的部门的上级部门不等于一级部门的id -->
 										<c:if test="${USER.dept.pid==0}">
 											<option value="0">无</option>
 										</c:if>
@@ -191,6 +231,17 @@
 								</select> <select id="dep2" name="dept.id">
 
 								</select></td>
+							</tr>
+							<tr>
+								<td width="20%" class="pn-flabel pn-flabel-h">头像:</td>
+								<td width="80%" class="pn-fcontent">
+									<!-- commonUpload(name的属性值,req) --> 
+									<input type="file" id="file" name="file" /> 
+									<!-- 回显图片 --> 
+									<img id="pic" width="50px" height="50px" src="../upload/${USER.pic}" /> 
+									<!-- 用于存储图片 --> 
+									<input type="hidden" name="pic" id="picurl" />
+								</td>
 							</tr>
 							<tr>
 								<td width="20%" class="pn-flabel pn-flabel-h">是否可用:</td>
